@@ -3,24 +3,49 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/core": "^7.17.0",
+    "@faker-js/faker": "^6.0.0-alpha.5",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.4.0",
     "@types/node": "^16.11.22",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
+    "bootstrap": "^5.1.3",
     "react": "^17.0.2",
+    "react-bootstrap": "^2.1.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "5.0.0",
+    "react-scripts": "^4.0.0",
     "typescript": "^4.5.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "build": "./script/build.sh",
+    "dev": "npm-watch build",
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "browserify": "browserify node_modules/@faker-js/faker -o dist/static/js/@faker-js/faker.js",
+    "browse": "browserify -r @faker-js/faker -p esmify src/chrome/background.ts -o dist/static/js/background.js ",
+    "rollup": "rollup --config rollup.config.js"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "@babel/preset-env"
+          ]
+        }
+      ]
+    ]
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "js,jsx,tsx,ts"
+    }
   },
   "eslintConfig": {
     "extends": [
@@ -39,5 +64,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@rollup/plugin-typescript": "^8.3.0",
+    "@types/chrome": "^0.0.177",
+    "@types/jest": "^27.4.0",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.0",
+    "npm-watch": "^0.11.0"
   }
 }
