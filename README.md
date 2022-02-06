@@ -1,4 +1,4 @@
-# Form Filler Extension
+# Form Filler Extension (Open Source)
 
 This chrome extension is currently in development.
 
