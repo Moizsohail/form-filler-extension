@@ -37,11 +37,12 @@ export interface RegexGenType {
   type: "reg";
   regex: string;
 }
+export type FakerParamsType = { [key: string]: string | boolean };
 export interface FakerGenType {
   type: "faker";
   category: string;
   api: string;
-  params?: string;
+  params?: FakerParamsType[];
   suffix?: string;
   prefix: string;
 }

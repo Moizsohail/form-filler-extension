@@ -7,8 +7,9 @@ import {
   FormControl,
 } from "react-bootstrap";
 import faker from "@faker-js/faker";
-import { FakerGenType, ValueGenType } from "../types";
+import { FakerGenType, FakerParamsType, ValueGenType } from "../types";
 import fakerData, { getApis } from "../fakerData";
+import ParamsInput from "./ParamsInput";
 const FakerModal = ({
   valueGen,
   updateValueGen,
@@ -18,8 +19,14 @@ const FakerModal = ({
   updateValueGen: (func: (prev: ValueGenType) => ValueGenType) => void;
   handleClose: () => void;
 }) => {
-  const { category, api, suffix = "", prefix = "" } = valueGen as FakerGenType;
-
+  const {
+    category,
+    api,
+    suffix = "",
+    prefix = "",
+    params,
+  } = valueGen as FakerGenType;
+  const paramsMetadata = category && api && fakerData[category][api];
   const handleUpdate = ({
     category,
     api,
@@ -56,6 +63,15 @@ const FakerModal = ({
     });
   };
   const [fakerResult, setFakerResult] = useState("");
+  const updateParamsValue = (
+    func: (prev: FakerParamsType[]) => FakerParamsType[]
+  ) => {
+    updateValueGen((prev) => {
+      const newState: FakerGenType = JSON.parse(JSON.stringify(prev));
+      newState.params = func(newState.params || []);
+      return newState;
+    });
+  };
 
   useEffect(() => {
     if (category && api) setFakerResult((faker as any)[category][api]() || "");
@@ -107,18 +123,27 @@ const FakerModal = ({
           </InputGroup>
           <InputGroup className="my-3">
             <FormControl
-              type="prefix"
+              type="text"
               value={prefix}
               onChange={(e) => handleUpdate({ prefix: e.target.value })}
               placeholder={`Prefix`}
             />
             <FormControl
-              type="suffix"
+              type="text"
               value={suffix}
               onChange={(e) => handleUpdate({ suffix: e.target.value })}
               placeholder={`Suffix`}
             />
           </InputGroup>
+          <div>
+            {paramsMetadata && (
+              <ParamsInput
+                params={params || []}
+                paramsMetadata={paramsMetadata}
+                updateParamsValue={updateParamsValue}
+              />
+            )}
+          </div>
           <FormControl
             type="text"
             readOnly

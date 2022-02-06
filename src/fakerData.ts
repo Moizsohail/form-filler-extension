@@ -1,7 +1,27 @@
-export const getApis = (category: any) => {
-  return Object.keys(data[category]);
-};
-const data: any = {
+type PossibleReturnTypes =
+  | "string"
+  | "string[]"
+  | "Date"
+  | "Date[]"
+  | "number"
+  | "any"
+  | "boolean"
+  | "void";
+type PossibleParamInputTypes = "string" | "number" | "boolean";
+export interface FakerDataType {
+  [key: string]: {
+    [key: string]: ParamsInputType;
+  };
+}
+export interface ParamsInputType {
+  args: {
+    optional: boolean;
+    type: PossibleParamInputTypes;
+    name: string;
+  }[];
+  returnType: PossibleReturnTypes[];
+}
+const data: FakerDataType = {
   lorem: {
     word: {
       args: [{ optional: true, type: "number", name: "length" }],
@@ -202,7 +222,7 @@ const data: any = {
       returnType: ["void"],
     },
     seed_array: {
-      args: [{ optional: false, type: "any", name: "A" }],
+      args: [{ optional: false, type: "string", name: "A" }],
       returnType: ["void"],
     },
   },
@@ -228,7 +248,7 @@ const data: any = {
     uuid: { args: [], returnType: ["string"] },
     boolean: { args: [], returnType: ["boolean"] },
     word: {
-      args: [{ optional: true, type: "unknown", name: "type" }],
+      args: [{ optional: true, type: "string", name: "type" }],
       returnType: ["string"],
     },
     words: {
@@ -376,7 +396,7 @@ const data: any = {
     },
     repeatString: {
       args: [
-        { optional: false, type: "any", name: "string" },
+        { optional: false, type: "string", name: "string" },
         { optional: true, type: "number", name: "num" },
       ],
       returnType: ["string"],
@@ -388,9 +408,7 @@ const data: any = {
     mustache: {
       args: [
         { optional: false, type: "string", name: "str" },
-        { optional: false, type: "Record", name: "data" },
         { optional: false, type: "string", name: "substring" },
-        { optional: false, type: "any", name: "args" },
       ],
       returnType: ["string"],
     },
@@ -443,7 +461,6 @@ const data: any = {
       args: [
         { optional: true, type: "number", name: "len" },
         { optional: true, type: "boolean", name: "memorable" },
-        { optional: true, type: "RegExp", name: "pattern" },
         { optional: true, type: "string", name: "prefix" },
       ],
       returnType: ["string"],
@@ -638,7 +655,7 @@ const data: any = {
   system: {
     fileName: { args: [], returnType: ["string"] },
     commonFileName: {
-      args: [{ optional: false, type: "any", name: "ext" }],
+      args: [{ optional: false, type: "string", name: "ext" }],
       returnType: ["string"],
     },
     mimeType: { args: [], returnType: ["string"] },
@@ -654,4 +671,19 @@ const data: any = {
     semver: { args: [], returnType: ["string"] },
   },
 };
-export default data;
+const cleanedData: any = {};
+const cleanData = () => {
+  Object.keys(data).forEach((categ) => {
+    const allowedApis = Object.keys(data[categ]).filter((api) => {
+      const val = data[categ][api];
+      return val.args.length === 0 && val.args.map(({ optional }) => optional);
+    });
+    if (allowedApis.length > 0) cleanedData[categ] = allowedApis;
+  });
+};
+cleanData();
+// const cleanedData = cleanData(data);
+export default cleanedData;
+export const getApis = (category: any) => {
+  return cleanedData[category];
+};
