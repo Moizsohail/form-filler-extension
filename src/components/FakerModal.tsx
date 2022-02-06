@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Button,
@@ -18,15 +18,18 @@ const FakerModal = ({
   updateValueGen: (func: (prev: ValueGenType) => ValueGenType) => void;
   handleClose: () => void;
 }) => {
-  const category = (valueGen as FakerGenType).category;
-  const api = (valueGen as FakerGenType).api;
+  const { category, api, suffix = "", prefix = "" } = valueGen as FakerGenType;
 
   const handleUpdate = ({
     category,
     api,
+    suffix,
+    prefix,
   }: {
     category?: string;
     api?: string;
+    suffix?: string;
+    prefix?: string;
   }) => {
     updateValueGen((prev) => {
       const newState: FakerGenType = JSON.parse(JSON.stringify(prev));
@@ -36,17 +39,28 @@ const FakerModal = ({
       if (api) {
         newState.api = api;
       }
-
-      const availableApis = getApis(newState.category);
-      if (!availableApis.includes(newState.api)) {
-        newState.api = availableApis[0];
+      if (suffix !== undefined) {
+        newState.suffix = suffix;
+      }
+      if (prefix !== undefined) {
+        newState.prefix = prefix;
+      }
+      if (category || api) {
+        const availableApis = getApis(newState.category);
+        if (!availableApis.includes(newState.api)) {
+          newState.api = availableApis[0];
+        }
       }
 
       return newState;
     });
   };
+  const [fakerResult, setFakerResult] = useState("");
 
-  const demoResult = category && api && (faker as any)[category][api]();
+  useEffect(() => {
+    if (category && api) setFakerResult((faker as any)[category][api]() || "");
+  }, [category, api]);
+  const demoResult = `${prefix}${fakerResult}${suffix}`;
   return (
     <>
       <Modal show={true}>
@@ -90,6 +104,20 @@ const FakerModal = ({
                 </Dropdown.Menu>
               </Dropdown>
             )}
+          </InputGroup>
+          <InputGroup className="my-3">
+            <FormControl
+              type="prefix"
+              value={prefix}
+              onChange={(e) => handleUpdate({ prefix: e.target.value })}
+              placeholder={`Prefix`}
+            />
+            <FormControl
+              type="suffix"
+              value={suffix}
+              onChange={(e) => handleUpdate({ suffix: e.target.value })}
+              placeholder={`Suffix`}
+            />
           </InputGroup>
           <FormControl
             type="text"

@@ -42,6 +42,8 @@ export interface FakerGenType {
   category: string;
   api: string;
   params?: string;
+  suffix?: string;
+  prefix: string;
 }
 export type ValueGenType = FixedGenType | RegexGenType | FakerGenType;
 

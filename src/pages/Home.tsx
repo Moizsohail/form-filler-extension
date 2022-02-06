@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Container, Form, Nav, Navbar } from "react-bootstrap";
+import { Container, Form, Nav, Navbar, Button } from "react-bootstrap";
 import ListProfiles from "../components/ListProfiles";
-import { Add } from "../components/Icons";
+import { Add, Pencil, Done } from "../components/Icons";
 import FullActivityIndicator from "../components/ActivityIndicator";
 import { URLData } from "../types";
 
@@ -9,6 +9,7 @@ const Home = () => {
   const [urlData, setURLData] = useState<URLData>({ profiles: [] });
   const [currentUrl, setCurrentUrl] = useState("");
   const [ready, setReady] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   useEffect(() => {
     const queryInfo: chrome.tabs.QueryInfo = {
       active: true,
@@ -58,16 +59,49 @@ const Home = () => {
           </Nav.Link>
         </Nav.Item>
       </Navbar>
-      <Container className="w-100 h-100">
+      <Container className="w-100 h-100 p-3 ">
         {ready ? (
           urlData.profiles.length > 0 ? (
-            <Form>
-              <div className="p-3">
-                <ListProfiles urlData={urlData} updateURLData={updateURLData} />
+            <>
+              <div className="d-flex w-100 justify-content-end">
+                <Button
+                  variant={editMode ? "outline-primary" : "outline-secondary"}
+                  className="mb-3 ml-auto"
+                  onClick={() => setEditMode((prev) => !prev)}
+                >
+                  {!editMode ? (
+                    <>
+                      <Pencil /> Edit Profiles
+                    </>
+                  ) : (
+                    <>
+                      <Done />
+                      Done
+                    </>
+                  )}
+                </Button>
               </div>
-            </Form>
+              <Form>
+                <div>
+                  <ListProfiles
+                    urlData={urlData}
+                    updateURLData={updateURLData}
+                    editMode={editMode}
+                  />
+                </div>
+              </Form>
+            </>
           ) : (
-            <p>No Profiles</p>
+            <p>
+              <em>No Profiles.</em>{" "}
+              <Button
+                variant={"link"}
+                className="p-0 pb-1"
+                onClick={addNewProfile}
+              >
+                <em>Add New Profile</em>
+              </Button>
+            </p>
           )
         ) : (
           <FullActivityIndicator />
