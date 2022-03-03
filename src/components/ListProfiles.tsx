@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Accordion, Card, useAccordionButton } from "react-bootstrap";
 import { sendMessage } from "../messaging";
 import { MessageTypes, URLData } from "../types";
-import { ChevronDown, ChevronUp, Pencil, Play, Remove } from "./Icons";
+import { ChevronDown, ChevronUp, Play, Remove } from "./Icons";
 import SingleProfile, { UpdateProfileDataFunc } from "./SingleProfile";
 
 const CustomToggle = ({ children, eventKey }: any) => {
