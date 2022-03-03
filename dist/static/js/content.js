@@ -7,6 +7,7 @@
         MessageTypes[MessageTypes["searchOn"] = 1] = "searchOn";
         MessageTypes[MessageTypes["searchOff"] = 2] = "searchOff";
         MessageTypes[MessageTypes["execute"] = 3] = "execute";
+        MessageTypes[MessageTypes["shortcutExecute"] = 4] = "shortcutExecute";
     })(MessageTypes || (MessageTypes = {}));
 
     const getXPathHelper = (element, i = 5) => {
@@ -81,11 +82,19 @@ Try adjusting maxTime or maxRetries parameters for faker.unique()`)}function Pa(
             element.value = value;
         }
     };
+    const executeAllFields = ({ fields }) => {
+        fields.forEach((f) => {
+            executeField(f);
+        });
+    };
     const messagesFromReactAppListener = (message, sender, sendResponse) => {
         console.log("[content.ts] Received Message", message);
         switch (message.type) {
             case MessageTypes.fetchAndOverwrite:
-                const fields = [...document.querySelectorAll("input")].filter((x) => {
+                const fields = [
+                    ...document.querySelectorAll("input"),
+                    ...document.querySelectorAll("textarea"),
+                ].filter((x) => {
                     const { width, height } = x.getBoundingClientRect();
                     return width > 0 && height > 0;
                 });
@@ -99,7 +108,7 @@ Try adjusting maxTime or maxRetries parameters for faker.unique()`)}function Pa(
                 }));
                 console.log(fieldData);
                 const formsData = {
-                    fields: fieldData.filter(({ type, name }) => name && type === "text"),
+                    fields: fieldData.filter(({ type, name }) => name && !["select", "file", "checkbox", "hidden"].includes(type)),
                 };
                 sendResponse(formsData);
                 break;
@@ -121,10 +130,15 @@ Try adjusting maxTime or maxRetries parameters for faker.unique()`)}function Pa(
                 if (overlayEL)
                     document.body.removeChild(overlayEL);
                 break;
-            case MessageTypes.execute:
-                message.fields.forEach((f) => {
-                    executeField(f);
+            case MessageTypes.shortcutExecute:
+                chrome.storage.sync.get([document.location.href]).then((obj) => {
+                    const urlData = obj[document.location.href];
+                    if (urlData && urlData.profiles.length)
+                        executeAllFields(urlData.profiles[0]);
                 });
+                break;
+            case MessageTypes.execute:
+                executeAllFields(message);
                 break;
             default:
                 console.error("Unrecognised message: ", message);

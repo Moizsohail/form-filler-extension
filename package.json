@@ -23,8 +23,6 @@
     "build": "./script/build.sh",
     "dev": "npm-watch build",
     "start": "react-scripts start",
-    "browserify": "browserify node_modules/@faker-js/faker -o dist/static/js/@faker-js/faker.js",
-    "browse": "browserify -r @faker-js/faker -p esmify src/chrome/background.ts -o dist/static/js/background.js ",
     "rollup": "rollup --config rollup.config.js"
   },
   "browserify": {

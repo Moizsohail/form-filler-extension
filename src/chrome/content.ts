@@ -2,7 +2,6 @@ import {
   ChromeMessage,
   ChromeMessageExecute,
   ChromeMessageSearchOn,
-  FakerGenType,
   FieldType,
   FixedGenType,
   MessageTypes,
@@ -33,6 +32,11 @@ const executeField = (field: FieldType) => {
     element.value = value;
   }
 };
+const executeAllFields = ({ fields }: ChromeMessageExecute) => {
+  fields.forEach((f: FieldType) => {
+    executeField(f);
+  });
+};
 const messagesFromReactAppListener = (
   message: ChromeMessage,
   sender: chrome.runtime.MessageSender,
@@ -42,7 +46,10 @@ const messagesFromReactAppListener = (
 
   switch (message.type) {
     case MessageTypes.fetchAndOverwrite:
-      const fields = [...document.querySelectorAll("input")].filter((x) => {
+      const fields = [
+        ...document.querySelectorAll("input"),
+        ...document.querySelectorAll("textarea"),
+      ].filter((x) => {
         const { width, height } = x.getBoundingClientRect();
         return width > 0 && height > 0;
       });
@@ -58,7 +65,10 @@ const messagesFromReactAppListener = (
       }));
       console.log(fieldData);
       const formsData: ProfileData = {
-        fields: fieldData.filter(({ type, name }) => name && type === "text"),
+        fields: fieldData.filter(
+          ({ type, name }) =>
+            name && !["select", "file", "checkbox", "hidden"].includes(type)
+        ),
       };
       sendResponse(formsData);
       break;
@@ -80,12 +90,17 @@ const messagesFromReactAppListener = (
       const overlayEL = document.getElementById(overlayId);
       if (overlayEL) document.body.removeChild(overlayEL);
       break;
-    case MessageTypes.execute:
-      (message as ChromeMessageExecute).fields.forEach((f: FieldType) => {
-        executeField(f);
+    case MessageTypes.shortcutExecute:
+      chrome.storage.sync.get([document.location.href]).then((obj) => {
+        const urlData = obj[document.location.href];
+        if (urlData && urlData.profiles.length)
+          executeAllFields(urlData.profiles[0]);
       });
-
       break;
+    case MessageTypes.execute:
+      executeAllFields(message as ChromeMessageExecute);
+      break;
+
     default:
       console.error("Unrecognised message: ", message);
   }

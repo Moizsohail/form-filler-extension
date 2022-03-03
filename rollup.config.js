@@ -1,6 +1,6 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
-export default [
+const config = [
   {
     input: ["./src/chrome/content.ts"],
     output: {
@@ -20,3 +20,4 @@ export default [
     plugins: [typescript()],
   },
 ];
+export default config;

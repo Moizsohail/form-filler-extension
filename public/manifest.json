@@ -19,20 +19,19 @@
   "background": { "service_worker": "./static/js/background.js" },
   "host_permissions": ["<all_urls>"],
   "commands": {
-    "run-foo": {
+    "run-profile-1": {
       "suggested_key": {
         "default": "Ctrl+Shift+Y",
-        "mac": "Command+MacCtrl+F"
+        "mac": "Command+MacCtrl+Y"
       },
-      "description": "Run \"foo\" on the current page."
+      "description": "Run \"profile 1\" on the current page."
     },
-    "_execute_action": {
+    "random": {
       "suggested_key": {
-        "windows": "Ctrl+Shift+Y",
-        "mac": "Command+Shift+X",
-        "chromeos": "Ctrl+Shift+U",
-        "linux": "Ctrl+Shift+J"
-      }
+        "default": "Ctrl+Shift+X",
+        "mac": "Command+MacCtrl+X"
+      },
+      "description": "Run \"random input\" on the current page."
     }
   }
 }

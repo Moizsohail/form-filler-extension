@@ -1,13 +1,17 @@
+import { sendMessage } from "../messaging";
+import { MessageTypes } from "../types";
+
 try {
   chrome.commands.onCommand.addListener((command) => {
-    console.log(`Command: ${command}`);
+    if (command === "run-profile-1") {
+      sendMessage(MessageTypes.shortcutExecute);
+    }
   });
 
-  console.log("background runnings");
   chrome.runtime.onInstalled.addListener((reason) => {
     console.log(reason, chrome.runtime.OnInstalledReason.INSTALL);
     if (reason.reason === chrome.runtime.OnInstalledReason.UPDATE) {
-      // checkCommandShortcuts();
+      checkCommandShortcuts();
     }
   });
 } catch (e) {
@@ -16,19 +20,18 @@ try {
 export {};
 // // Only use this function during the initial install phase. After
 // // installation the user may have intentionally unassigned commands.
-// function checkCommandShortcuts() {
-//   console.log("CHECKING");
-//   chrome.commands.getAll((commands) => {
-//     let missingShortcuts = [];
-//     console.log(commands);
-//     for (let { name, shortcut } of commands) {
-//       if (shortcut === "") {
-//         missingShortcuts.push(name);
-//       }
-//     }
+function checkCommandShortcuts() {
+  chrome.commands.getAll((commands) => {
+    let missingShortcuts = [];
+    console.log(commands);
+    for (let { name, shortcut } of commands) {
+      if (shortcut === "") {
+        missingShortcuts.push(name);
+      }
+    }
 
-//     if (missingShortcuts.length > 0) {
-//       console.log("damn", missingShortcuts);
-//     }
-//   });
-// }
+    if (missingShortcuts.length > 0) {
+      console.log("damn", missingShortcuts);
+    }
+  });
+}

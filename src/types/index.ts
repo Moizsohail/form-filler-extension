@@ -4,6 +4,7 @@ export enum MessageTypes {
   searchOn,
   searchOff,
   execute,
+  shortcutExecute,
 }
 
 export interface ChromeMessageDefault {
