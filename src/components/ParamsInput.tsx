@@ -1,5 +1,4 @@
 import React from "react";
-import { Form, FormControl } from "react-bootstrap";
 import { ParamsInputType } from "../fakerData";
 import { FakerParamsType } from "../types";
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Form, FormControl, InputGroup } from "react-bootstrap";
 import { sendMessage } from "../messaging";
-import { FieldType, FixedGenType, MessageTypes, ValueGenType } from "../types";
+import { FieldType, MessageTypes, ValueGenType } from "../types";
 import FakerModal from "./FakerModal";
 import { Remove } from "./Icons";
 import ValueGenSelector from "./ValueGenSelector";
