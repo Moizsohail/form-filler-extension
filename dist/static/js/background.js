@@ -29,7 +29,6 @@
             if (command === "run-profile-1") {
                 sendMessage(MessageTypes.shortcutExecute);
             }
-            ;
         });
         chrome.runtime.onInstalled.addListener((reason) => {
             console.log(reason, chrome.runtime.OnInstalledReason.INSTALL);
@@ -44,7 +43,6 @@
     // // Only use this function during the initial install phase. After
     // // installation the user may have intentionally unassigned commands.
     function checkCommandShortcuts() {
-        console.log("CHECKING");
         chrome.commands.getAll((commands) => {
             let missingShortcuts = [];
             console.log(commands);
